@@ -48,6 +48,7 @@ function initializeSlider() {
       ...(props.minimal ? minimalClasses : fancyClasses),
     },
     ...(props.tooltips && { tooltips: true }),
+    ...(props.isRange && { margin: 100 }),
   }
 
   slider.value = noUiSlider.create(sliderRef.value, config)

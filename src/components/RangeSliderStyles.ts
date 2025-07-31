@@ -38,13 +38,13 @@ const baseTooltipStyles =
 // Minimal variant styles
 const minimalHandleStyles = `${baseHandleStyles} size-4 bg-white border border-gray-600 hover:border-gray-700 transition-colors`
 const minimalTargetStyles = 'target relative h-1.5 rounded-full bg-gray-200'
-const minimalConnectStyles = `${baseConnectStyles} bg-blue-500`
+const minimalConnectStyles = `${baseConnectStyles} bg-indigo-500`
 
 // Fancy variant styles
-const fancyHandleStyles = `${baseHandleStyles} size-6 bg-gradient-to-br from-white to-gray-100 border-2 border-blue-500 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200`
+const fancyHandleStyles = `${baseHandleStyles} size-6 bg-gradient-to-br from-white to-gray-100 border-2 border-indigo-500 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200`
 const fancyTargetStyles =
   'target relative h-3 rounded-full bg-gradient-to-r from-gray-200 to-gray-300 shadow-inner'
-const fancyConnectStyles = `${baseConnectStyles} bg-gradient-to-r from-blue-500 to-blue-600 shadow-sm`
+const fancyConnectStyles = `${baseConnectStyles} bg-gradient-to-r from-indigo-500 to-purple-600 shadow-sm`
 const fancyTooltipStyles = `${baseTooltipStyles} bg-gradient-to-br from-white to-gray-50 border border-gray-200 text-gray-800 py-2 px-3 rounded-lg mb-4 shadow-lg backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200`
 
 export const minimalClasses = {

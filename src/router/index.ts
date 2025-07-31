@@ -15,6 +15,26 @@ const routes: RouteRecordRaw[] = [
     // which is lazy-loaded when the route is visited.
     component: () => import('@/views/AboutView.vue'),
   },
+  {
+    path: '/tone-generator',
+    name: 'tone-generator',
+    component: () => import('@/views/AboutView.vue'),
+  },
+  {
+    path: '/sine-sweep',
+    name: 'sine-sweep',
+    component: () => import('@/views/AboutView.vue'),
+  },
+  {
+    path: '/audio-analyzer',
+    name: 'audio-analyzer',
+    component: () => import('@/views/AboutView.vue'),
+  },
+  {
+    path: '/noise-generator',
+    name: 'noise-generator',
+    component: () => import('@/views/AboutView.vue'),
+  },
 ]
 
 const router = createRouter({

@@ -18,12 +18,12 @@
       :key="item.name"
       :to="{ name: item.name }"
       class="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 shadow-sm hover:shadow-md mb-2 flex-shrink-0 group relative"
-      :class="[item.colorClass, item.hoverClass, { [item.activeClass]: $route.name === item.name }]"
+      :class="[item.baseClass, { [item.activeClass]: $route.name === item.name }]"
       :title="item.title"
     >
       <component :is="item.icon" class="w-5 h-5" />
       <span
-        class="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10"
+        class="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-all duration-300 delay-150 whitespace-nowrap z-10"
       >
         {{ item.title }}
       </span>
@@ -55,32 +55,28 @@ const navigationItems = [
     name: 'tone-generator',
     title: 'Tone Generator',
     icon: MusicalNoteIcon,
-    colorClass: 'text-blue-400',
-    hoverClass: 'hover:bg-blue-900/30',
+    baseClass: 'text-blue-400 hover:bg-blue-900/30',
     activeClass: 'bg-blue-900/30 shadow-md',
   },
   {
     name: 'sine-sweep',
     title: 'Sine Sweep',
     icon: ChartBarIcon,
-    colorClass: 'text-green-400',
-    hoverClass: 'hover:bg-green-900/30',
+    baseClass: 'text-green-400 hover:bg-green-900/30',
     activeClass: 'bg-green-900/30 shadow-md',
   },
   {
     name: 'audio-analyzer',
     title: 'Audio Analyzer',
     icon: ChartBarSquareIcon,
-    colorClass: 'text-purple-400',
-    hoverClass: 'hover:bg-purple-900/30',
+    baseClass: 'text-purple-400 hover:bg-purple-900/30',
     activeClass: 'bg-purple-900/30 shadow-md',
   },
   {
     name: 'noise-generator',
     title: 'Noise Generator',
     icon: SignalIcon,
-    colorClass: 'text-orange-400',
-    hoverClass: 'hover:bg-orange-900/30',
+    baseClass: 'text-orange-400 hover:bg-orange-900/30',
     activeClass: 'bg-orange-900/30 shadow-md',
   },
 ]

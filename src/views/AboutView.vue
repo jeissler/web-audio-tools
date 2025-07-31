@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300"
-  >
-    <h2 class="text-xl font-semibold text-gray-900 mb-4">About</h2>
+  <PageLayout title="About">
     <div class="space-y-6 text-gray-700">
       <p class="leading-relaxed">
         Hey there! I'm a
@@ -54,9 +51,9 @@
         if you're curious about the implementation details.
       </p>
     </div>
-  </div>
+  </PageLayout>
 </template>
 
 <script setup lang="ts">
-// About component logic
+import PageLayout from '@/layouts/PageLayout.vue'
 </script>

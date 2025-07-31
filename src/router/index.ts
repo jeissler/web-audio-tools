@@ -18,22 +18,22 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/tone-generator',
     name: 'tone-generator',
-    component: () => import('@/views/AboutView.vue'),
+    component: () => import('@/views/ToneGeneratorView.vue'),
   },
   {
     path: '/sine-sweep',
     name: 'sine-sweep',
-    component: () => import('@/views/AboutView.vue'),
+    component: () => import('@/views/SineSweepView.vue'),
   },
   {
     path: '/audio-analyzer',
     name: 'audio-analyzer',
-    component: () => import('@/views/AboutView.vue'),
+    component: () => import('@/views/AudioAnalyzerView.vue'),
   },
   {
     path: '/noise-generator',
     name: 'noise-generator',
-    component: () => import('@/views/AboutView.vue'),
+    component: () => import('@/views/NoiseGeneratorView.vue'),
   },
 ]
 

@@ -1,5 +1,5 @@
 export const commonClasses = {
-  base: 'base size-full relative z-1',
+  base: 'base size-full relative z-1 contain-layout',
   origin: 'origin absolute top-0 end-0 size-full origin-[0_0] rounded-full',
   connects: 'connects relative z-0 size-full rounded-full overflow-hidden',
   ltr: 'ltr',

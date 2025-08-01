@@ -5,7 +5,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import noUiSlider, { type Options, type API } from 'nouislider'
-import { commonClasses, minimalClasses, fancyClasses } from './RangeSliderStyles'
+import {
+  commonClasses,
+  minimalClasses,
+  fancyClasses,
+  minimalVerticalClasses,
+  fancyVerticalClasses,
+} from './RangeSliderStyles'
 
 interface Props {
   modelValue?: number | [number, number]
@@ -15,6 +21,7 @@ interface Props {
   isRange?: boolean
   tooltips?: boolean
   minimal?: boolean
+  orientation?: 'horizontal' | 'vertical'
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -24,6 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
   isRange: false,
   tooltips: false,
   minimal: false,
+  orientation: 'horizontal',
 })
 
 const emit = defineEmits<{
@@ -42,10 +50,17 @@ function initializeSlider() {
     range: { min: props.min, max: props.max },
     step: props.step,
     animate: false,
+    ...(props.orientation === 'vertical' && { orientation: 'vertical', direction: 'rtl' }),
     cssPrefix: '',
     cssClasses: {
       ...commonClasses,
-      ...(props.minimal ? minimalClasses : fancyClasses),
+      ...(props.orientation === 'vertical'
+        ? props.minimal
+          ? minimalVerticalClasses
+          : fancyVerticalClasses
+        : props.minimal
+          ? minimalClasses
+          : fancyClasses),
     },
     ...(props.tooltips && { tooltips: true }),
     ...(props.isRange && { margin: 100 }),

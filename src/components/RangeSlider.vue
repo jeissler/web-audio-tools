@@ -1,5 +1,5 @@
 <template>
-  <div ref="sliderRef"></div>
+  <div ref="sliderRef" :style="orientation === 'vertical' ? `height: ${height}px` : ''"></div>
 </template>
 
 <script setup lang="ts">
@@ -22,6 +22,7 @@ interface Props {
   tooltips?: boolean
   minimal?: boolean
   orientation?: 'horizontal' | 'vertical'
+  height?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -32,6 +33,7 @@ const props = withDefaults(defineProps<Props>(), {
   tooltips: false,
   minimal: false,
   orientation: 'horizontal',
+  height: 300,
 })
 
 const emit = defineEmits<{
@@ -44,6 +46,16 @@ const slider = ref<API | null>(null)
 function initializeSlider() {
   if (!sliderRef.value) return
 
+  const cssClasses = {
+    ...commonClasses,
+    ...(props.orientation === 'vertical'
+      ? props.minimal
+        ? minimalVerticalClasses
+        : fancyVerticalClasses
+      : props.minimal
+        ? minimalClasses
+        : fancyClasses),
+  }
   const config: Options = {
     start: props.isRange ? [props.min, props.max] : [props.min],
     connect: props.isRange ? true : 'lower',
@@ -52,16 +64,7 @@ function initializeSlider() {
     animate: false,
     ...(props.orientation === 'vertical' && { orientation: 'vertical', direction: 'rtl' }),
     cssPrefix: '',
-    cssClasses: {
-      ...commonClasses,
-      ...(props.orientation === 'vertical'
-        ? props.minimal
-          ? minimalVerticalClasses
-          : fancyVerticalClasses
-        : props.minimal
-          ? minimalClasses
-          : fancyClasses),
-    },
+    cssClasses,
     ...(props.tooltips && { tooltips: true }),
     ...(props.isRange && { margin: 100 }),
   }
@@ -78,6 +81,7 @@ function initializeSlider() {
 
   function handleTooltipVisibility(show: boolean) {
     if (!props.tooltips) return
+
     const tooltips = slider.value?.getTooltips()
     tooltips?.forEach((tooltip) => {
       if (!tooltip) return

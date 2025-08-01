@@ -1,4 +1,3 @@
-// Common classes shared across all slider variants
 export const commonClasses = {
   base: 'base size-full relative z-1',
   origin: 'origin absolute top-0 end-0 size-full origin-[0_0] rounded-full',
@@ -28,27 +27,36 @@ export const commonClasses = {
   valueSub: 'value-sub text-xs text-gray-400',
 }
 
-const baseHandleStyles =
+const baseHorizontalHandleStyles =
   'absolute top-1/2 end-0 rounded-full cursor-pointer translate-x-2/4 -translate-y-2/4'
+
+const baseVerticalHandleStyles =
+  'absolute start-1/2 rounded-full cursor-pointer -translate-x-2/4 -translate-y-2/4'
+
 const baseConnectStyles = 'absolute top-0 end-0 z-1 size-full origin-[0_0]'
 const baseTooltipStyles =
   'tooltip absolute bottom-full start-2/4 -translate-x-2/4 text-sm font-medium'
 
-const minimalHandleStyles = `${baseHandleStyles} size-4 bg-white border border-gray-600 hover:border-gray-700 transition-colors`
+const minimalHorizontalHandleStyles = `${baseHorizontalHandleStyles} size-4 bg-white border border-gray-600 hover:border-gray-700 transition-colors`
+const minimalVerticalHandleStyles = `${baseVerticalHandleStyles} size-4 bg-white border border-gray-600 hover:border-gray-700 transition-colors`
 const minimalTargetStyles = 'target relative h-1.5 rounded-full bg-gray-200'
+const minimalVerticalTargetStyles = 'target relative w-1.5 rounded-full bg-gray-200'
 const minimalConnectStyles = `${baseConnectStyles} bg-indigo-500`
 
-const fancyHandleStyles = `${baseHandleStyles} size-6 bg-gradient-to-br from-white to-gray-100 border-2 border-indigo-500 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200`
+const fancyHorizontalHandleStyles = `${baseHorizontalHandleStyles} size-6 bg-gradient-to-br from-white to-gray-100 border-2 border-indigo-500 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200`
+const fancyVerticalHandleStyles = `${baseVerticalHandleStyles} size-6 bg-gradient-to-br from-white to-gray-100 border-2 border-indigo-500 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200`
 const fancyTargetStyles =
   'target relative h-3 rounded-full bg-gradient-to-r from-gray-200 to-gray-300 shadow-inner'
+const fancyVerticalTargetStyles =
+  'target relative w-3 rounded-full bg-gradient-to-r from-gray-200 to-gray-300 shadow-inner'
 const fancyConnectStyles = `${baseConnectStyles} bg-gradient-to-r from-indigo-500 to-purple-600 shadow-sm`
 const fancyTooltipStyles = `${baseTooltipStyles} bg-gradient-to-br from-white to-gray-50 border border-gray-200 text-gray-800 py-2 px-3 rounded-lg mb-4 shadow-lg backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200`
 
 export const minimalClasses = {
   target: minimalTargetStyles,
-  handle: `handle ${minimalHandleStyles}`,
-  handleLower: `handle-lower ${minimalHandleStyles}`,
-  handleUpper: `handle-upper ${minimalHandleStyles}`,
+  handle: `handle ${minimalHorizontalHandleStyles}`,
+  handleLower: `handle-lower ${minimalHorizontalHandleStyles}`,
+  handleUpper: `handle-upper ${minimalHorizontalHandleStyles}`,
   touchArea: 'touch-area absolute -inset-1',
   horizontal: 'horizontal h-1.5',
   vertical: 'vertical w-1.5',
@@ -59,9 +67,9 @@ export const minimalClasses = {
 
 export const fancyClasses = {
   target: fancyTargetStyles,
-  handle: `handle ${fancyHandleStyles}`,
-  handleLower: `handle-lower ${fancyHandleStyles}`,
-  handleUpper: `handle-upper ${fancyHandleStyles}`,
+  handle: `handle ${fancyHorizontalHandleStyles}`,
+  handleLower: `handle-lower ${fancyHorizontalHandleStyles}`,
+  handleUpper: `handle-upper ${fancyHorizontalHandleStyles}`,
   touchArea: 'touch-area absolute -inset-2',
   horizontal: 'horizontal h-3',
   vertical: 'vertical w-3',
@@ -71,13 +79,10 @@ export const fancyClasses = {
 }
 
 export const minimalVerticalClasses = {
-  target: 'target relative rounded-full bg-gradient-to-b from-gray-200 to-gray-300 shadow-inner',
-  handle:
-    'handle absolute start-1/2 rounded-full cursor-pointer -translate-x-2/4 -translate-y-2/4 size-4 bg-white border border-gray-600 hover:border-gray-700 transition-colors',
-  handleLower:
-    'handle-lower absolute start-1/2 rounded-full cursor-pointer -translate-x-2/4 -translate-y-2/4 size-4 bg-white border border-gray-600 hover:border-gray-700 transition-colors',
-  handleUpper:
-    'handle-upper absolute start-1/2 rounded-full cursor-pointer -translate-x-2/4 -translate-y-2/4 size-4 bg-white border border-gray-600 hover:border-gray-700 transition-colors',
+  target: minimalVerticalTargetStyles,
+  handle: `handle ${minimalVerticalHandleStyles}`,
+  handleLower: `handle-lower ${minimalVerticalHandleStyles}`,
+  handleUpper: `handle-upper ${minimalVerticalHandleStyles}`,
   touchArea: 'touch-area absolute -inset-1',
   horizontal: 'horizontal h-1.5',
   vertical: 'vertical h-100 w-1.5',
@@ -87,13 +92,10 @@ export const minimalVerticalClasses = {
 }
 
 export const fancyVerticalClasses = {
-  target: 'target relative rounded-full bg-gradient-to-b from-gray-200 to-gray-300 shadow-inner',
-  handle:
-    'handle absolute start-1/2 rounded-full cursor-pointer -translate-x-2/4 -translate-y-2/4 size-6 bg-gradient-to-br from-white to-gray-100 border-2 border-indigo-500 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200',
-  handleLower:
-    'handle-lower absolute start-1/2 rounded-full cursor-pointer -translate-x-2/4 -translate-y-2/4 size-6 bg-gradient-to-br from-white to-gray-100 border-2 border-indigo-500 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200',
-  handleUpper:
-    'handle-upper absolute start-1/2 rounded-full cursor-pointer -translate-x-2/4 -translate-y-2/4 size-6 bg-gradient-to-br from-white to-gray-100 border-2 border-indigo-500 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200',
+  target: fancyVerticalTargetStyles,
+  handle: `handle ${fancyVerticalHandleStyles}`,
+  handleLower: `handle-lower ${fancyVerticalHandleStyles}`,
+  handleUpper: `handle-upper ${fancyVerticalHandleStyles}`,
   touchArea: 'touch-area absolute -inset-2',
   horizontal: 'horizontal h-3',
   vertical: 'vertical h-100 w-3',

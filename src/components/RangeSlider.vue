@@ -56,8 +56,14 @@ function initializeSlider() {
         ? minimalClasses
         : fancyClasses),
   }
+  const startValue = props.isRange
+    ? Array.isArray(props.modelValue)
+      ? props.modelValue
+      : [props.min, props.max]
+    : [props.modelValue ?? props.min]
+
   const config: Options = {
-    start: props.isRange ? [props.min, props.max] : [props.min],
+    start: startValue as number[],
     connect: props.isRange ? true : 'lower',
     range: { min: props.min, max: props.max },
     step: props.step,

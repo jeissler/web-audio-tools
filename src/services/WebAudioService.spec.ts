@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { WebAudioService, type WaveType } from '../WebAudioService'
+import { WebAudioService, type WaveType } from './WebAudioService'
 
 // Mock Web Audio API
 const mockAudioContext = {

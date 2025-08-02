@@ -77,8 +77,10 @@ function initializeSlider() {
 
   slider.value = noUiSlider.create(sliderRef.value, config)
 
-  function handleSliderEvent(values: (number | string)[]) {
-    const numericValues = values.map((v) => (typeof v === 'string' ? parseFloat(v) : v))
+  function handleSliderEvent(values: (number | string)[] | number | string) {
+    // Handle both array and single value returns from noUiSlider
+    const valuesArray = Array.isArray(values) ? values : [values]
+    const numericValues = valuesArray.map((v) => (typeof v === 'string' ? parseFloat(v) : v))
     const emitValue = props.isRange
       ? ([numericValues[0], numericValues[1]] as [number, number])
       : numericValues[0]

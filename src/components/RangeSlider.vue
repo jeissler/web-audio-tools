@@ -62,9 +62,9 @@ function initializeSlider() {
     range: { min: props.min, max: props.max },
     step: props.step,
     animate: false,
-    ...(props.orientation === 'vertical' && { orientation: 'vertical', direction: 'rtl' }),
     cssPrefix: '',
     cssClasses,
+    ...(props.orientation === 'vertical' && { orientation: 'vertical', direction: 'rtl' }),
     ...(props.tooltips && { tooltips: true }),
     ...(props.isRange && { margin: 100 }),
   }

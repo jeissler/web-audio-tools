@@ -1,5 +1,9 @@
 export type WaveType = OscillatorType // 'sine' | 'square' | 'sawtooth' | 'triangle'
 
+interface WebkitWindow extends Window {
+  webkitAudioContext?: typeof AudioContext
+}
+
 export class WebAudioService {
   private audioCtx: AudioContext | null = null
   private oscillator: OscillatorNode | null = null
@@ -16,9 +20,8 @@ export class WebAudioService {
   private ensureContext(): void {
     if (this.audioCtx) return
 
-    const AudioCtx =
-      window.AudioContext ||
-      (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+    const AudioCtx = window.AudioContext || (window as WebkitWindow).webkitAudioContext
+
     if (!AudioCtx) throw new Error('Web Audio API is not supported in this browser.')
 
     this.audioCtx = new AudioCtx()

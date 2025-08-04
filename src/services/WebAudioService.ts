@@ -54,12 +54,13 @@ export class WebAudioService {
     this._isPlaying = false
   }
 
-  public startTone(
-    freq: number = DEFAULT_FREQUENCY,
-    volume: number = DEFAULT_VOLUME,
-    type: WaveType = DEFAULT_TYPE,
-    pan: number = 0,
-    duration: number = DEFAULT_DURATION,
+  private playOscillator(
+    startFreq: number,
+    endFreq: number,
+    duration: number,
+    volume: number,
+    type: WaveType,
+    pan: number,
   ): void {
     if (this._isPlaying) return
 
@@ -68,24 +69,48 @@ export class WebAudioService {
 
     if (!this.audioCtx || !this.gainNode || !this.panNode) return
 
-    const startTime = this.audioCtx.currentTime
-    const stopTime = startTime + duration
+    const now = this.audioCtx.currentTime
+    const stopTime = now + duration
 
     this.oscillator = this.audioCtx.createOscillator()
     this.oscillator.type = type
-    this.oscillator.frequency.setValueAtTime(freq, startTime)
 
-    this.gainNode.gain.setValueAtTime(volume, startTime)
-    this.panNode.pan.setValueAtTime(pan, startTime)
+    this.oscillator.frequency.setValueAtTime(startFreq, now)
+
+    if (startFreq !== endFreq) {
+      this.oscillator.frequency.linearRampToValueAtTime(endFreq, stopTime)
+    }
+
+    this.gainNode.gain.setValueAtTime(volume, now)
+    this.panNode.pan.setValueAtTime(pan, now)
 
     this.oscillator.connect(this.gainNode)
-    this.oscillator.start(startTime)
+    this.oscillator.start(now)
     this.oscillator.stop(stopTime)
 
     this._isPlaying = true
-
-    // Clean up nodes after the tone stops
     this.oscillator.onended = () => this.cleanup()
+  }
+
+  public startTone(
+    freq: number = DEFAULT_FREQUENCY,
+    volume: number = DEFAULT_VOLUME,
+    type: WaveType = DEFAULT_TYPE,
+    pan: number = 0,
+    duration: number = DEFAULT_DURATION,
+  ): void {
+    this.playOscillator(freq, freq, duration, volume, type, pan)
+  }
+
+  public startSweep(
+    startFreq: number,
+    endFreq: number,
+    duration: number,
+    volume: number = DEFAULT_VOLUME,
+    type: WaveType = DEFAULT_TYPE,
+    pan: number = 0,
+  ): void {
+    this.playOscillator(startFreq, endFreq, duration, volume, type, pan)
   }
 
   public stopTone(): void {

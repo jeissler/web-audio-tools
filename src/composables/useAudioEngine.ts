@@ -9,6 +9,7 @@ let durationTimeout: ReturnType<typeof setTimeout> | null = null
 
 export function useAudioEngine() {
   const frequency = ref(DEFAULT_FREQUENCY)
+  const frequencyRange = ref<[number, number]>([DEFAULT_FREQUENCY, 2000])
   const pan = ref(0)
   const { volume, waveType, isPlaying, duration } = storeToRefs(useAudioStore())
 
@@ -29,9 +30,22 @@ export function useAudioEngine() {
 
     // Set timeout to stop after duration
     clearDurationTimeout()
-    durationTimeout = setTimeout(() => {
-      stop()
-    }, duration.value * 1000)
+    durationTimeout = setTimeout(stop, duration.value * 1000)
+  }
+
+  function startSweep(startFreq: number, endFreq: number) {
+    audioService.startSweep(
+      startFreq,
+      endFreq,
+      duration.value,
+      volume.value,
+      waveType.value,
+      pan.value,
+    )
+    isPlaying.value = true
+
+    clearDurationTimeout()
+    durationTimeout = setTimeout(stop, duration.value * 1000)
   }
 
   function stop() {
@@ -64,6 +78,7 @@ export function useAudioEngine() {
     // Reactive values
     isPlaying,
     frequency,
+    frequencyRange,
     pan,
     waveType,
     volume,
@@ -71,6 +86,7 @@ export function useAudioEngine() {
 
     // Actions
     start,
+    startSweep,
     stop,
     setFrequency,
     setPan,

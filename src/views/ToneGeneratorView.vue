@@ -6,18 +6,24 @@
           Frequency: {{ frequency }} Hz
         </label>
         <RangeSlider
-          v-model="frequency"
+          :model-value="frequency"
           :min="20"
           :max="2000"
           :step="1"
           :tooltips="true"
           class="mt-2"
+          @update:model-value="handleFrequencyChange"
         />
       </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div class="max-w-64">
-          <ControlSelect v-model="waveType" label="Wave Type" :options="WAVE_TYPE_OPTIONS" />
+          <ControlSelect
+            :model-value="waveType"
+            label="Wave Type"
+            :options="WAVE_TYPE_OPTIONS"
+            @update:model-value="handleWaveTypeChange"
+          />
         </div>
 
         <div class="max-w-64">
@@ -28,7 +34,7 @@
             :min="0.1"
             :max="60"
             :step="0.1"
-            @update:model-value="(value) => setDuration(value as number)"
+            @update:model-value="handleDurationChange"
           />
         </div>
       </div>
@@ -63,7 +69,30 @@ import ControlButton from '@/components/ControlButton.vue'
 import ControlSelect from '@/components/ControlSelect.vue'
 import ControlInput from '@/components/ControlInput.vue'
 import { useAudioEngine } from '@/composables/useAudioEngine'
+import type { WaveType } from '@/services/WebAudioService'
 
-const { frequency, waveType, isPlaying, start, stop, duration, setDuration, WAVE_TYPE_OPTIONS } =
-  useAudioEngine()
+const {
+  frequency,
+  waveType,
+  isPlaying,
+  start,
+  stop,
+  duration,
+  setDuration,
+  setFrequency,
+  setWaveType,
+  WAVE_TYPE_OPTIONS,
+} = useAudioEngine()
+
+function handleFrequencyChange(value: number | [number, number]) {
+  setFrequency(value as number)
+}
+
+function handleWaveTypeChange(value: string | number) {
+  setWaveType(value as WaveType)
+}
+
+function handleDurationChange(value: string | number) {
+  setDuration(value as number)
+}
 </script>

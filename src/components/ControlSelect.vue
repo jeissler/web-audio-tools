@@ -10,12 +10,12 @@
       @change="handleChange"
     >
       <option
-        v-for="option in options"
-        :key="option.value"
-        :value="option.value"
-        :disabled="option.disabled"
+        v-for="{ value, label, disabled } in options"
+        :key="value"
+        :value="value"
+        :disabled="disabled"
       >
-        {{ option.label }}
+        {{ label }}
       </option>
     </select>
     <ChevronDownIcon

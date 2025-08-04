@@ -1,9 +1,10 @@
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { WebAudioService, type WaveType } from '@/services/WebAudioService'
 import { useAudioStore } from '@/stores/audio'
 import { storeToRefs } from 'pinia'
 
 const audioService = new WebAudioService()
+const isPlaying = ref(audioService.isPlaying)
 
 export function useAudioEngine() {
   const frequency = ref(440)
@@ -11,12 +12,18 @@ export function useAudioEngine() {
   const waveType = ref<WaveType>('sine')
   const { volume } = storeToRefs(useAudioStore())
 
+  function syncIsPlaying() {
+    isPlaying.value = audioService.isPlaying
+  }
+
   function start() {
     audioService.startTone(frequency.value, volume.value, waveType.value, pan.value)
+    syncIsPlaying()
   }
 
   function stop() {
     audioService.stopTone()
+    syncIsPlaying()
   }
 
   function setFrequency(freq: number) {
@@ -41,7 +48,7 @@ export function useAudioEngine() {
 
   return {
     // Reactive values
-    isPlaying: computed(() => audioService.isPlaying),
+    isPlaying,
     frequency,
     pan,
     waveType,

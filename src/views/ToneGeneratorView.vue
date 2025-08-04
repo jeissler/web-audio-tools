@@ -28,13 +28,12 @@
 
         <div class="max-w-64">
           <ControlInput
-            :model-value="duration"
+            v-model="duration"
             label="Duration (seconds)"
             type="number"
             :min="0.1"
             :max="60"
             :step="0.1"
-            @update:model-value="handleDurationChange"
           />
         </div>
       </div>
@@ -78,7 +77,6 @@ const {
   start,
   stop,
   duration,
-  setDuration,
   setFrequency,
   setWaveType,
   WAVE_TYPE_OPTIONS,
@@ -90,9 +88,5 @@ function handleFrequencyChange(value: number | [number, number]) {
 
 function handleWaveTypeChange(value: string | number) {
   setWaveType(value as WaveType)
-}
-
-function handleDurationChange(value: string | number) {
-  setDuration(value as number)
 }
 </script>

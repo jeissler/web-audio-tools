@@ -28,13 +28,12 @@
 
         <div class="max-w-64">
           <ControlInput
-            :model-value="duration"
+            v-model="duration"
             label="Duration (seconds)"
             type="number"
             :min="0.1"
             :max="60"
             :step="0.1"
-            @update:model-value="handleDurationChange"
           />
         </div>
       </div>
@@ -77,7 +76,6 @@ const {
   startSweep,
   stop,
   duration,
-  setDuration,
   setWaveType,
   WAVE_TYPE_OPTIONS,
   frequencyRange,
@@ -87,11 +85,7 @@ function handleWaveTypeChange(value: string | number) {
   setWaveType(value as WaveType)
 }
 
-function handleDurationChange(value: string | number) {
-  setDuration(value as number)
-}
-
 function handleStart() {
-  startSweep(frequencyRange.value[0], frequencyRange.value[1])
+  startSweep()
 }
 </script>

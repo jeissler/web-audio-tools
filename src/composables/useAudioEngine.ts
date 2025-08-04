@@ -33,10 +33,10 @@ export function useAudioEngine() {
     durationTimeout = setTimeout(stop, duration.value * 1000)
   }
 
-  function startSweep(startFreq: number, endFreq: number) {
+  function startSweep() {
     audioService.startSweep(
-      startFreq,
-      endFreq,
+      frequencyRange.value[0],
+      frequencyRange.value[1],
       duration.value,
       volume.value,
       waveType.value,
@@ -44,6 +44,7 @@ export function useAudioEngine() {
     )
     isPlaying.value = true
 
+    // Set timeout to stop after duration
     clearDurationTimeout()
     durationTimeout = setTimeout(stop, duration.value * 1000)
   }

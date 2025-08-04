@@ -9,8 +9,7 @@ const isPlaying = ref(audioService.isPlaying)
 export function useAudioEngine() {
   const frequency = ref(440)
   const pan = ref(0)
-  const waveType = ref<WaveType>('sine')
-  const { volume } = storeToRefs(useAudioStore())
+  const { volume, waveType } = storeToRefs(useAudioStore())
 
   function syncIsPlaying() {
     isPlaying.value = audioService.isPlaying

@@ -1,3 +1,10 @@
+import {
+  DEFAULT_FREQUENCY,
+  DEFAULT_VOLUME,
+  DEFAULT_TYPE,
+  DEFAULT_DURATION,
+} from '@/constants/audio'
+
 export type WaveType = OscillatorType // 'sine' | 'square' | 'sawtooth' | 'triangle'
 
 interface WebkitWindow extends Window {
@@ -10,7 +17,6 @@ export class WebAudioService {
   private gainNode: GainNode | null = null
   private panNode: StereoPannerNode | null = null
   private analyser: AnalyserNode | null = null
-
   private _isPlaying = false
 
   get isPlaying(): boolean {
@@ -39,11 +45,21 @@ export class WebAudioService {
     this.analyser.connect(this.audioCtx.destination)
   }
 
+  private cleanup(): void {
+    this.oscillator = null
+    this.gainNode = null
+    this.panNode = null
+    this.analyser = null
+    this.audioCtx = null
+    this._isPlaying = false
+  }
+
   public startTone(
-    freq: number = 440,
-    volume: number = 0.5,
-    type: WaveType = 'sine',
+    freq: number = DEFAULT_FREQUENCY,
+    volume: number = DEFAULT_VOLUME,
+    type: WaveType = DEFAULT_TYPE,
     pan: number = 0,
+    duration: number = DEFAULT_DURATION,
   ): void {
     if (this._isPlaying) return
 
@@ -52,17 +68,24 @@ export class WebAudioService {
 
     if (!this.audioCtx || !this.gainNode || !this.panNode) return
 
+    const startTime = this.audioCtx.currentTime
+    const stopTime = startTime + duration
+
     this.oscillator = this.audioCtx.createOscillator()
     this.oscillator.type = type
-    this.oscillator.frequency.setValueAtTime(freq, this.audioCtx.currentTime)
+    this.oscillator.frequency.setValueAtTime(freq, startTime)
 
-    this.gainNode.gain.setValueAtTime(volume, this.audioCtx.currentTime)
-    this.panNode.pan.setValueAtTime(pan, this.audioCtx.currentTime)
+    this.gainNode.gain.setValueAtTime(volume, startTime)
+    this.panNode.pan.setValueAtTime(pan, startTime)
 
     this.oscillator.connect(this.gainNode)
-    this.oscillator.start()
+    this.oscillator.start(startTime)
+    this.oscillator.stop(stopTime)
 
     this._isPlaying = true
+
+    // Clean up nodes after the tone stops
+    this.oscillator.onended = () => this.cleanup()
   }
 
   public stopTone(): void {
@@ -76,12 +99,7 @@ export class WebAudioService {
 
     this.audioCtx.close()
 
-    this.oscillator = null
-    this.gainNode = null
-    this.panNode = null
-    this.analyser = null
-    this.audioCtx = null
-    this._isPlaying = false
+    this.cleanup()
   }
 
   public setFrequency(freq: number): void {

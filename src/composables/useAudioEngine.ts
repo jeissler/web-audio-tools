@@ -2,27 +2,42 @@ import { ref, watch } from 'vue'
 import { WebAudioService, type WaveType } from '@/services/WebAudioService'
 import { useAudioStore } from '@/stores/audio'
 import { storeToRefs } from 'pinia'
+import { WAVE_TYPE_OPTIONS, DEFAULT_FREQUENCY } from '@/constants/audio'
 
 const audioService = new WebAudioService()
-const isPlaying = ref(audioService.isPlaying)
+let durationTimeout: ReturnType<typeof setTimeout> | null = null
 
 export function useAudioEngine() {
-  const frequency = ref(440)
+  const frequency = ref(DEFAULT_FREQUENCY)
   const pan = ref(0)
-  const { volume, waveType } = storeToRefs(useAudioStore())
+  const { volume, waveType, isPlaying, duration } = storeToRefs(useAudioStore())
 
-  function syncIsPlaying() {
-    isPlaying.value = audioService.isPlaying
+  function clearDurationTimeout() {
+    if (durationTimeout) {
+      clearTimeout(durationTimeout)
+      durationTimeout = null
+    }
+  }
+
+  function setDuration(newDuration: number) {
+    duration.value = newDuration
   }
 
   function start() {
     audioService.startTone(frequency.value, volume.value, waveType.value, pan.value)
-    syncIsPlaying()
+    isPlaying.value = true
+
+    // Set timeout to stop after duration
+    clearDurationTimeout()
+    durationTimeout = setTimeout(() => {
+      stop()
+    }, duration.value * 1000)
   }
 
   function stop() {
     audioService.stopTone()
-    syncIsPlaying()
+    isPlaying.value = false
+    clearDurationTimeout()
   }
 
   function setFrequency(freq: number) {
@@ -52,6 +67,7 @@ export function useAudioEngine() {
     pan,
     waveType,
     volume,
+    duration,
 
     // Actions
     start,
@@ -59,5 +75,9 @@ export function useAudioEngine() {
     setFrequency,
     setPan,
     setWaveType,
+    setDuration,
+
+    // Constants
+    WAVE_TYPE_OPTIONS,
   }
 }

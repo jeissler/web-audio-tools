@@ -1,16 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { WaveType } from '@/services/WebAudioService'
-
-export const WAVE_TYPE_OPTIONS: Array<{ value: WaveType; label: string }> = [
-  { value: 'sine', label: 'Sine' },
-  { value: 'square', label: 'Square' },
-  { value: 'sawtooth', label: 'Sawtooth' },
-  { value: 'triangle', label: 'Triangle' },
-]
+import { DEFAULT_VOLUME, DEFAULT_TYPE, DEFAULT_DURATION } from '@/constants/audio'
 
 export const useAudioStore = defineStore('audio', () => {
-  const volume = ref(0.5)
-  const waveType = ref<WaveType>('sine')
-  return { volume, waveType }
+  const isPlaying = ref(false)
+  const duration = ref(DEFAULT_DURATION)
+  const volume = ref(DEFAULT_VOLUME)
+  const waveType = ref<WaveType>(DEFAULT_TYPE)
+  return { isPlaying, duration, volume, waveType }
 })

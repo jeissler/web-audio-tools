@@ -15,11 +15,25 @@
         />
       </div>
 
-      <div class="max-w-64">
-        <ControlSelect v-model="waveType" label="Wave Type" :options="WAVE_TYPE_OPTIONS" />
+      <div class="grid grid-cols-2 gap-4">
+        <div class="max-w-64">
+          <ControlSelect v-model="waveType" label="Wave Type" :options="WAVE_TYPE_OPTIONS" />
+        </div>
+
+        <div class="max-w-64">
+          <ControlInput
+            :model-value="duration"
+            label="Duration (seconds)"
+            type="number"
+            :min="0.1"
+            :max="60"
+            :step="0.1"
+            @update:model-value="(value) => setDuration(value as number)"
+          />
+        </div>
       </div>
 
-      <div class="flex gap-4 justify-center">
+      <div class="flex gap-4 justify-center mt-10">
         <ControlButton
           class="bg-green-600 text-white hover:bg-green-700"
           :disabled="isPlaying"
@@ -47,8 +61,9 @@ import PageLayout from '@/layouts/PageLayout.vue'
 import RangeSlider from '@/components/RangeSlider.vue'
 import ControlButton from '@/components/ControlButton.vue'
 import ControlSelect from '@/components/ControlSelect.vue'
+import ControlInput from '@/components/ControlInput.vue'
 import { useAudioEngine } from '@/composables/useAudioEngine'
-import { WAVE_TYPE_OPTIONS } from '@/stores/audio'
 
-const { frequency, waveType, isPlaying, start, stop } = useAudioEngine()
+const { frequency, waveType, isPlaying, start, stop, duration, setDuration, WAVE_TYPE_OPTIONS } =
+  useAudioEngine()
 </script>

@@ -3,7 +3,7 @@
     @click="$emit('click')"
     :disabled="disabled"
     :class="[
-      'font-bold rounded-lg transition px-6 py-3 flex items-center gap-2 cursor-pointer',
+      'font-bold rounded-lg transition px-6 py-3 flex items-center justify-center gap-2 cursor-pointer',
       $attrs.class ? '' : defaultClasses,
       disabled ? 'disabled:bg-gray-400 disabled:cursor-not-allowed' : '',
     ]"

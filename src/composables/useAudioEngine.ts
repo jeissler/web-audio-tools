@@ -80,6 +80,10 @@ export function useAudioEngine() {
     isPlaying.value = false
   }
 
+  function setNoiseType(type: NoiseType) {
+    audioService.setNoiseType(type)
+  }
+
   // Keep service volume in sync with global volume store
   watch(volume, (val) => {
     audioService.setVolume(val)
@@ -105,6 +109,7 @@ export function useAudioEngine() {
     setDuration,
     startNoise,
     stopNoise,
+    setNoiseType,
 
     // Constants
     WAVE_TYPE_OPTIONS,

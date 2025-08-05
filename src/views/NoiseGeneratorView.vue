@@ -12,7 +12,7 @@
           :key="noiseType.value"
           @click="selectNoiseType(noiseType.value)"
           :class="[
-            'relative p-6 rounded-xl border-2 transition-all duration-200 text-left flex flex-col items-start',
+            'relative p-6 rounded-xl border-2 transition-all duration-200 text-left flex flex-col items-start cursor-pointer',
             selectedNoiseType === noiseType.value
               ? 'border-blue-500 bg-blue-50 shadow-lg'
               : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md',

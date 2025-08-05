@@ -14,6 +14,7 @@
 
       <!-- Right side - Volume control -->
       <div class="flex items-center space-x-2">
+        <span class="text-sm text-gray-600">master</span>
         <SpeakerWaveIcon class="w-5 h-5 text-gray-600" />
         <RangeSlider v-model="volume" :min="0" :max="1" :step="0.01" :minimal="true" class="w-32" />
       </div>

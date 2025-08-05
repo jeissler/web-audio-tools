@@ -42,6 +42,7 @@
             :max="1"
             :step="0.1"
             :tooltips="true"
+            :connect="false"
             class="mt-2"
             @update:model-value="handlePanChange"
           />

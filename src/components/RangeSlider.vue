@@ -23,6 +23,7 @@ interface Props {
   minimal?: boolean
   orientation?: 'horizontal' | 'vertical'
   height?: number
+  connect?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -34,6 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   minimal: false,
   orientation: 'horizontal',
   height: 300,
+  connect: true,
 })
 
 const emit = defineEmits<{
@@ -64,7 +66,7 @@ function initializeSlider() {
 
   const config: Options = {
     start: startValue as number[],
-    connect: props.isRange ? true : 'lower',
+    connect: props.isRange ? true : props.connect ? 'lower' : false,
     range: { min: props.min, max: props.max },
     step: props.step,
     animate: false,

@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
+    "postbuild": "cp _redirects dist/_redirects",
     "preview": "vite preview",
     "test:unit": "vitest",
     "build-only": "vite build",

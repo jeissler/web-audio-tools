@@ -1,26 +1,35 @@
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <router-link
-      v-for="tool in audioTools"
-      :key="tool.name"
-      :to="{ name: tool.name }"
-      class="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300 block"
-    >
-      <div class="flex items-center space-x-4 mb-4">
-        <div :class="`w-12 h-12 ${tool.theme.iconBg} rounded-lg flex items-center justify-center`">
-          <component :is="tool.theme.icon" class="w-6 h-6" />
-        </div>
-        <div>
-          <h2 class="text-xl font-semibold text-gray-900">{{ tool.title }}</h2>
-          <p class="text-gray-600">{{ tool.description }}</p>
-        </div>
-      </div>
-      <div
-        :class="`h-24 ${tool.theme.actionArea} border-2 border-dashed rounded-lg flex items-center justify-center`"
+  <div>
+    <p class="text-lg text-center text-gray-600 mb-8">
+      Audio testing tools for equipment calibration, system analysis, and audio quality assessment.
+      Generate precise tones, sweeps, and noise patterns to validate your equipment performance.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <router-link
+        v-for="tool in audioTools"
+        :key="tool.name"
+        :to="{ name: tool.name }"
+        class="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300 block"
       >
-        <p class="font-medium text-sm">{{ tool.actionText }}</p>
-      </div>
-    </router-link>
+        <div class="flex items-center space-x-4 mb-4">
+          <div
+            :class="`w-12 h-12 ${tool.theme.iconBg} rounded-lg flex items-center justify-center`"
+          >
+            <component :is="tool.theme.icon" class="w-6 h-6" />
+          </div>
+          <div>
+            <h2 class="text-xl font-semibold text-gray-900">{{ tool.title }}</h2>
+            <p class="text-gray-600">{{ tool.description }}</p>
+          </div>
+        </div>
+        <div
+          :class="`h-24 ${tool.theme.actionArea} border-2 border-dashed rounded-lg flex items-center justify-center`"
+        >
+          <p class="font-medium text-sm">{{ tool.actionText }}</p>
+        </div>
+      </router-link>
+    </div>
   </div>
 </template>
 

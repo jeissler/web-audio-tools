@@ -108,25 +108,25 @@ export class WebAudioService {
     this.oscillator.onended = () => this.cleanup()
   }
 
-  public startTone(
+  public async startTone(
     freq: number = DEFAULT_FREQUENCY,
     volume: number = DEFAULT_VOLUME,
     type: WaveType = DEFAULT_TYPE,
     pan: number = 0,
     duration: number = DEFAULT_DURATION,
-  ): void {
-    this.playOscillator(freq, freq, duration, volume, type, pan)
+  ): Promise<void> {
+    await this.playOscillator(freq, freq, duration, volume, type, pan)
   }
 
-  public startSweep(
+  public async startSweep(
     startFreq: number,
     endFreq: number,
     duration: number,
     volume: number = DEFAULT_VOLUME,
     type: WaveType = DEFAULT_TYPE,
     pan: number = 0,
-  ): void {
-    this.playOscillator(startFreq, endFreq, duration, volume, type, pan)
+  ): Promise<void> {
+    await this.playOscillator(startFreq, endFreq, duration, volume, type, pan)
   }
 
   public stopTone(): void {

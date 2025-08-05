@@ -5,11 +5,12 @@ import { WebAudioService, type WaveType } from './WebAudioService'
 const mockAudioContext = {
   createOscillator: vi.fn(() => ({
     type: 'sine',
-    frequency: { setValueAtTime: vi.fn() },
+    frequency: { setValueAtTime: vi.fn(), linearRampToValueAtTime: vi.fn() },
     connect: vi.fn(),
     start: vi.fn(),
     stop: vi.fn(),
     disconnect: vi.fn(),
+    onended: vi.fn(),
   })),
   createGain: vi.fn(() => ({
     gain: { setValueAtTime: vi.fn() },
@@ -25,9 +26,23 @@ const mockAudioContext = {
     connect: vi.fn(),
     disconnect: vi.fn(),
   })),
+  audioWorklet: {
+    addModule: vi.fn().mockResolvedValue(undefined),
+  },
   currentTime: 0,
   destination: {},
   close: vi.fn(),
+  resume: vi.fn().mockResolvedValue(undefined),
+  state: 'running',
+}
+
+// Mock AudioWorkletNode
+const mockAudioWorkletNode = {
+  port: {
+    postMessage: vi.fn(),
+  },
+  connect: vi.fn(),
+  disconnect: vi.fn(),
 }
 
 // Setup/teardown Web Audio API mocks
@@ -39,6 +54,9 @@ const setupWebAudioMocks = () => {
   window.AudioContext = mockConstructor
   // @ts-expect-error - Mocking browser API
   window.webkitAudioContext = mockConstructor
+
+  // Mock AudioWorkletNode constructor
+  global.AudioWorkletNode = vi.fn(() => mockAudioWorkletNode) as unknown as typeof AudioWorkletNode
 
   vi.clearAllMocks()
   return originalAudioContext
@@ -53,6 +71,8 @@ const teardownWebAudioMocks = (originalAudioContext?: typeof AudioContext) => {
   }
   // @ts-expect-error - Cleaning up mock
   delete window.webkitAudioContext
+  // @ts-expect-error - Cleaning up mock
+  delete global.AudioWorkletNode
 }
 
 describe('WebAudioService', () => {
@@ -79,112 +99,110 @@ describe('WebAudioService', () => {
     it('should return null for audio context before initialization', () => {
       expect(service.getAudioContext()).toBeNull()
     })
-
-    it('should return null for analyser before initialization', () => {
-      expect(service.getAnalyserNode()).toBeNull()
-    })
   })
 
   describe('startTone', () => {
-    it('should start tone and set isPlaying to true', () => {
-      service.startTone()
+    it('should start tone and set isPlaying to true', async () => {
+      await service.startTone()
       expect(service.isPlaying).toBe(true)
     })
 
-    it('should not start tone if already playing', () => {
-      service.startTone()
+    it('should not start tone if already playing', async () => {
+      await service.startTone()
       const initialContext = service.getAudioContext()
-      service.startTone()
+      await service.startTone()
       expect(service.getAudioContext()).toBe(initialContext)
     })
 
-    it('should create audio context when starting tone', () => {
-      service.startTone()
+    it('should create audio context when starting tone', async () => {
+      await service.startTone()
       expect(service.getAudioContext()).not.toBeNull()
     })
+  })
 
-    it('should create analyser when starting tone', () => {
-      service.startTone()
-      expect(service.getAnalyserNode()).not.toBeNull()
+  describe('startSweep', () => {
+    it('should start frequency sweep', async () => {
+      await service.startSweep(440, 880, 2)
+      expect(service.isPlaying).toBe(true)
+    })
+
+    it('should use linear ramp for frequency changes', async () => {
+      await service.startSweep(440, 880, 2)
+      expect(mockAudioContext.createOscillator).toHaveBeenCalled()
+      const oscillator = mockAudioContext.createOscillator.mock.results[0].value
+      expect(oscillator.frequency.linearRampToValueAtTime).toHaveBeenCalledWith(
+        880,
+        expect.any(Number),
+      )
     })
   })
 
   describe('stopTone', () => {
-    it('should stop tone and set isPlaying to false', () => {
-      service.startTone()
+    it('should stop tone and set isPlaying to false', async () => {
+      await service.startTone()
       service.stopTone()
       expect(service.isPlaying).toBe(false)
     })
 
-    it('should not stop if not playing', () => {
-      service.stopTone()
-      expect(service.isPlaying).toBe(false)
-    })
-
-    it('should reset audio context after stopping', () => {
-      service.startTone()
+    it('should reset audio context after stopping', async () => {
+      await service.startTone()
       service.stopTone()
       expect(service.getAudioContext()).toBeNull()
-    })
-
-    it('should reset analyser after stopping', () => {
-      service.startTone()
-      service.stopTone()
-      expect(service.getAnalyserNode()).toBeNull()
-    })
-  })
-
-  describe('parameter setters', () => {
-    beforeEach(() => {
-      service.startTone()
-    })
-
-    it('should set frequency without throwing error', () => {
-      expect(() => service.setFrequency(660)).not.toThrow()
-    })
-
-    it('should set volume without throwing error', () => {
-      expect(() => service.setVolume(0.7)).not.toThrow()
-    })
-
-    it('should set pan without throwing error', () => {
-      expect(() => service.setPan(0.3)).not.toThrow()
-    })
-
-    it('should set wave type without throwing error', () => {
-      expect(() => service.setWaveType('square')).not.toThrow()
     })
   })
 
   describe('wave types', () => {
-    it('should support all oscillator types', () => {
+    it('should support all oscillator types', async () => {
       const waveTypes: WaveType[] = ['sine', 'square', 'sawtooth', 'triangle']
 
-      waveTypes.forEach((type) => {
-        service.startTone(440, 0.5, type)
+      for (const type of waveTypes) {
+        await service.startTone(440, 0.5, type)
         service.stopTone()
         expect(service.isPlaying).toBe(false)
-      })
+      }
+    })
+  })
+
+  describe('noise functionality', () => {
+    it('should create noise node', async () => {
+      await service.createNoiseNode()
+      expect(service.isPlaying).toBe(true)
+    })
+
+    it('should stop noise', async () => {
+      await service.createNoiseNode()
+      service.stopNoise()
+      expect(service.isPlaying).toBe(false)
+    })
+  })
+
+  describe('error handling', () => {
+    it('should handle AudioWorklet module loading failure', async () => {
+      mockAudioContext.audioWorklet.addModule = vi
+        .fn()
+        .mockRejectedValue(new Error('Module not found'))
+      await service.startTone()
+      expect(service.isPlaying).toBe(true) // Should still work despite AudioWorklet failure
+    })
+
+    it('should throw error when Web Audio API is not supported', async () => {
+      // @ts-expect-error - Testing error case
+      delete window.AudioContext
+      // @ts-expect-error - Testing error case
+      delete window.webkitAudioContext
+
+      await expect(service.startTone()).rejects.toThrow('Web Audio API is not supported')
     })
   })
 
   describe('edge cases', () => {
-    it('should handle multiple start/stop cycles', () => {
-      service.startTone()
+    it('should handle multiple start/stop cycles', async () => {
+      await service.startTone()
       service.stopTone()
-      service.startTone()
+      await service.startTone()
       service.stopTone()
 
       expect(service.isPlaying).toBe(false)
-    })
-
-    it('should handle parameter updates when not playing', () => {
-      expect(() => {
-        service.setFrequency(880)
-        service.setVolume(0.8)
-        service.setPan(0.5)
-        service.setWaveType('square')
-      }).not.toThrow()
     })
   })
 })

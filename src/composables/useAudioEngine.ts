@@ -71,7 +71,7 @@ export function useAudioEngine() {
   }
 
   async function startNoise(type: NoiseType) {
-    await audioService.createNoiseNode(type)
+    await audioService.createNoiseNode(type, volume.value)
     isPlaying.value = true
   }
 

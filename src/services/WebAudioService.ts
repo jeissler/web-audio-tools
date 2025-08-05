@@ -42,6 +42,11 @@ export class WebAudioService {
     } catch (e) {
       console.error('Failed to load AudioWorklet module:', e)
     }
+
+    // Resume context if suspended
+    if (this.audioCtx.state === 'suspended') {
+      await this.audioCtx.resume()
+    }
   }
 
   private initNodes(): void {
@@ -65,17 +70,17 @@ export class WebAudioService {
     this._isPlaying = false
   }
 
-  private playOscillator(
+  private async playOscillator(
     startFreq: number,
     endFreq: number,
     duration: number,
     volume: number,
     type: WaveType,
     pan: number,
-  ): void {
+  ): Promise<void> {
     if (this._isPlaying) return
 
-    this.ensureContext()
+    await this.ensureContext()
     this.initNodes()
 
     if (!this.audioCtx || !this.gainNode || !this.panNode) return
@@ -166,27 +171,47 @@ export class WebAudioService {
     return this.audioCtx
   }
 
-  public async createNoiseNode(type: NoiseType = DEFAULT_NOISE_TYPE): Promise<void> {
+  public async createNoiseNode(
+    type: NoiseType = DEFAULT_NOISE_TYPE,
+    volume: number = DEFAULT_VOLUME,
+  ): Promise<void> {
+    if (this._isPlaying) return
+
     await this.ensureContext()
+    this.initNodes()
+
     if (!this.audioCtx) return
 
-    // Disconnect existing noise if any
     this.stopNoise()
 
     this.noiseNode = new AudioWorkletNode(this.audioCtx, 'noise-processor', {
       processorOptions: { noiseType: type },
     })
 
-    this.noiseNode.connect(this.audioCtx.destination)
+    // Connect through gain and pan nodes for volume control
+    if (this.gainNode && this.panNode) {
+      this.noiseNode.connect(this.gainNode)
+      this.gainNode.gain.setValueAtTime(volume, this.audioCtx.currentTime)
+    }
+
+    this._isPlaying = true
   }
 
   public stopNoise(): void {
     this.noiseNode?.disconnect()
     this.noiseNode = null
+    this._isPlaying = false
   }
 
   public setNoiseType(type: NoiseType): void {
     if (!this.noiseNode) return
     this.noiseNode.port.postMessage({ type: 'setNoiseType', value: type })
+  }
+
+  public async startNoise(
+    type: NoiseType = DEFAULT_NOISE_TYPE,
+    volume: number = DEFAULT_VOLUME,
+  ): Promise<void> {
+    await this.createNoiseNode(type, volume)
   }
 }

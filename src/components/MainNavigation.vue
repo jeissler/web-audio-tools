@@ -14,7 +14,7 @@
 
     <!-- Section icons -->
     <router-link
-      v-for="item in navigationItems"
+      v-for="item in navigation"
       :key="item.name"
       :to="{ name: item.name }"
       class="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 shadow-sm hover:shadow-md mb-2 flex-shrink-0 group relative"
@@ -41,6 +41,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   MusicalNoteIcon,
   HomeIcon,
@@ -50,7 +52,9 @@ import {
   SignalIcon,
 } from '@heroicons/vue/24/outline'
 
-const navigationItems = [
+const router = useRouter()
+
+const navigation = [
   {
     name: 'tone-generator',
     title: 'Tone Generator',
@@ -60,17 +64,10 @@ const navigationItems = [
   },
   {
     name: 'sine-sweep',
-    title: 'Sine Sweep',
+    title: 'Sine Sweep Generator',
     icon: ChartBarIcon,
     baseClass: 'text-green-400 hover:bg-green-900/30',
     activeClass: 'bg-green-900/30 shadow-md',
-  },
-  {
-    name: 'audio-analyzer',
-    title: 'Audio Analyzer',
-    icon: ChartBarSquareIcon,
-    baseClass: 'text-purple-400 hover:bg-purple-900/30',
-    activeClass: 'bg-purple-900/30 shadow-md',
   },
   {
     name: 'noise-generator',
@@ -79,5 +76,23 @@ const navigationItems = [
     baseClass: 'text-orange-400 hover:bg-orange-900/30',
     activeClass: 'bg-orange-900/30 shadow-md',
   },
+  {
+    name: 'stereo-tester',
+    title: 'Right/Left Stereo Tester',
+    icon: ChartBarSquareIcon,
+    baseClass: 'text-purple-400 hover:bg-purple-900/30',
+    activeClass: 'bg-purple-900/30 shadow-md',
+  },
 ]
+
+const isOpen = ref(false)
+
+function toggleMenu() {
+  isOpen.value = !isOpen.value
+}
+
+function navigateTo(routeName: string) {
+  router.push({ name: routeName })
+  isOpen.value = false
+}
 </script>

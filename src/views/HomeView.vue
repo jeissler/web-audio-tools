@@ -78,10 +78,10 @@ const audioTools = [
     theme: themes.orange,
   },
   {
-    name: 'audio-analyzer',
-    title: 'Audio Analyzer',
-    description: 'Real-time spectrum and waveform analysis',
-    actionText: 'Analyze audio in real-time',
+    name: 'stereo-tester',
+    title: 'Right/Left Stereo Tester',
+    description: 'Test stereo channel separation and balance',
+    actionText: 'Test stereo channels',
     theme: themes.purple,
   },
 ]

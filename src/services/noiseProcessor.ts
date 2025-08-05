@@ -71,12 +71,11 @@ class NoiseProcessor extends AudioWorkletProcessor {
   }
 
   process(inputs: Float32Array[][], outputs: Float32Array[][]): boolean {
-    const left = outputs[0][0]
-    const right = outputs[0][1]
+    const output = outputs[0]
 
-    if (!left || !right) return true
+    if (!output || output.length === 0) return true
 
-    for (let i = 0; i < left.length; i++) {
+    for (let i = 0; i < output[0].length; i++) {
       const white = this.generateWhiteNoise()
       let noiseValue: number
 
@@ -94,8 +93,10 @@ class NoiseProcessor extends AudioWorkletProcessor {
           noiseValue = white
       }
 
-      left[i] = noiseValue
-      right[i] = noiseValue
+      // Fill all output channels with the same noise value
+      for (let channel = 0; channel < output.length; channel++) {
+        output[channel][i] = noiseValue
+      }
     }
 
     return true

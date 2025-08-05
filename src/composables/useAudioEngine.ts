@@ -1,5 +1,5 @@
 import { ref, watch } from 'vue'
-import { WebAudioService, type WaveType } from '@/services/WebAudioService'
+import { WebAudioService, type WaveType, type NoiseType } from '@/services/WebAudioService'
 import { useAudioStore } from '@/stores/audio'
 import { storeToRefs } from 'pinia'
 import { WAVE_TYPE_OPTIONS, DEFAULT_FREQUENCY } from '@/constants/audio'
@@ -70,6 +70,16 @@ export function useAudioEngine() {
     audioService.setWaveType(type)
   }
 
+  async function startNoise(type: NoiseType) {
+    await audioService.createNoiseNode(type)
+    isPlaying.value = true
+  }
+
+  function stopNoise() {
+    audioService.stopNoise()
+    isPlaying.value = false
+  }
+
   // Keep service volume in sync with global volume store
   watch(volume, (val) => {
     audioService.setVolume(val)
@@ -93,6 +103,8 @@ export function useAudioEngine() {
     setPan,
     setWaveType,
     setDuration,
+    startNoise,
+    stopNoise,
 
     // Constants
     WAVE_TYPE_OPTIONS,

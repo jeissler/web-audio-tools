@@ -52,7 +52,7 @@
       <div class="flex gap-4 justify-center">
         <ControlButton
           class="bg-purple-600 text-white hover:bg-purple-700"
-          :disabled="isPlaying"
+          :disabled="isAnyPlaying"
           @click="startPanTest"
         >
           <PlayIcon class="w-5 h-5" />
@@ -68,7 +68,6 @@
         </ControlButton>
       </div>
 
-      <!-- Two Column Layout -->
       <div class="grid grid-cols-2 gap-6 mt-12">
         <!-- Left Channel -->
         <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
@@ -81,7 +80,7 @@
             <div class="flex gap-2">
               <ControlButton
                 class="bg-blue-600 text-white hover:bg-blue-700 flex-1"
-                :disabled="isLeftPlaying"
+                :disabled="isLeftPlaying || isAnyPlaying"
                 @click="startLeft"
               >
                 <PlayIcon class="w-4 h-4" />
@@ -110,7 +109,7 @@
             <div class="flex gap-2">
               <ControlButton
                 class="bg-green-600 text-white hover:bg-green-700 flex-1"
-                :disabled="isRightPlaying"
+                :disabled="isRightPlaying || isAnyPlaying"
                 @click="startRight"
               >
                 <PlayIcon class="w-4 h-4" />
@@ -158,6 +157,8 @@ const {
 const isLeftPlaying = ref(false)
 const isRightPlaying = ref(false)
 
+const isAnyPlaying = computed(() => isPlaying.value || isLeftPlaying.value || isRightPlaying.value)
+
 const panLabel = computed(() => {
   if (pan.value === -1) return 'Full Left'
   if (pan.value === 1) return 'Full Right'
@@ -181,6 +182,8 @@ function handleWaveTypeChange(value: string | number) {
 function startPanTest() {
   // Use current pan position and start playing
   start()
+  isLeftPlaying.value = false
+  isRightPlaying.value = false
 }
 
 function stopPanTest() {
@@ -193,11 +196,14 @@ function startLeft() {
   setPan(-1)
   start()
   isLeftPlaying.value = true
+  isRightPlaying.value = false
 }
 
 function startRight() {
   setPan(1)
+  start()
   isRightPlaying.value = true
+  isLeftPlaying.value = false
 }
 
 function stopLeft() {

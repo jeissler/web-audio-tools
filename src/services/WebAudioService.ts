@@ -1,17 +1,22 @@
+import noiseProcessorUrl from '@/services/noiseProcessor.ts?worker&url'
+
 import {
   DEFAULT_FREQUENCY,
   DEFAULT_VOLUME,
   DEFAULT_TYPE,
   DEFAULT_DURATION,
+  DEFAULT_NOISE_TYPE,
 } from '@/constants/audio'
 
 export type WaveType = OscillatorType // 'sine' | 'square' | 'sawtooth' | 'triangle'
+export type NoiseType = 'white' | 'pink' | 'brown'
 
 interface WebkitWindow extends Window {
   webkitAudioContext?: typeof AudioContext
 }
 
 export class WebAudioService {
+  private noiseNode: AudioWorkletNode | null = null
   private audioCtx: AudioContext | null = null
   private oscillator: OscillatorNode | null = null
   private gainNode: GainNode | null = null
@@ -23,7 +28,7 @@ export class WebAudioService {
     return this._isPlaying
   }
 
-  private ensureContext(): void {
+  private async ensureContext(): Promise<void> {
     if (this.audioCtx) return
 
     const AudioCtx = window.AudioContext || (window as WebkitWindow).webkitAudioContext
@@ -31,6 +36,12 @@ export class WebAudioService {
     if (!AudioCtx) throw new Error('Web Audio API is not supported in this browser.')
 
     this.audioCtx = new AudioCtx()
+
+    try {
+      await this.audioCtx.audioWorklet.addModule(noiseProcessorUrl)
+    } catch (e) {
+      console.error('Failed to load AudioWorklet module:', e)
+    }
   }
 
   private initNodes(): void {
@@ -153,5 +164,29 @@ export class WebAudioService {
 
   public getAudioContext(): AudioContext | null {
     return this.audioCtx
+  }
+
+  public async createNoiseNode(type: NoiseType = DEFAULT_NOISE_TYPE): Promise<void> {
+    await this.ensureContext()
+    if (!this.audioCtx) return
+
+    // Disconnect existing noise if any
+    this.stopNoise()
+
+    this.noiseNode = new AudioWorkletNode(this.audioCtx, 'noise-processor', {
+      processorOptions: { noiseType: type },
+    })
+
+    this.noiseNode.connect(this.audioCtx.destination)
+  }
+
+  public stopNoise(): void {
+    this.noiseNode?.disconnect()
+    this.noiseNode = null
+  }
+
+  public setNoiseType(type: NoiseType): void {
+    if (!this.noiseNode) return
+    this.noiseNode.port.postMessage({ type: 'setNoiseType', value: type })
   }
 }

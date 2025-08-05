@@ -1,5 +1,7 @@
 import { type WaveType, type NoiseType } from '@/services/WebAudioService'
 
+export const MIN_FREQUENCY = 20
+export const MAX_FREQUENCY = 20000
 export const DEFAULT_FREQUENCY = 440
 export const DEFAULT_VOLUME = 0.5
 export const DEFAULT_DURATION = 10

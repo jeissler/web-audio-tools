@@ -12,8 +12,8 @@
         </label>
         <RangeSlider
           v-model="frequencyRange"
-          :min="20"
-          :max="2000"
+          :min="MIN_FREQUENCY"
+          :max="MAX_FREQUENCY"
           :step="1"
           :tooltips="true"
           :is-range="true"
@@ -73,6 +73,7 @@ import ControlButton from '@/components/ControlButton.vue'
 import ControlSelect from '@/components/ControlSelect.vue'
 import ControlInput from '@/components/ControlInput.vue'
 import { useAudioEngine } from '@/composables/useAudioEngine'
+import { MIN_FREQUENCY, MAX_FREQUENCY } from '@/constants/audio'
 import type { WaveType } from '@/services/WebAudioService'
 
 const {

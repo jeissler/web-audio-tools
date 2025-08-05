@@ -1,5 +1,10 @@
 <template>
   <PageLayout title="Sine Sweep Generator">
+    <template #description>
+      Create frequency sweeps that smoothly transition from one frequency to another. Ideal for
+      testing speaker response, room acoustics, and audio system analysis.
+    </template>
+
     <div class="space-y-6">
       <div>
         <label for="frequencyRange" class="block text-sm/6 font-medium text-gray-900">

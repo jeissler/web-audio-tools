@@ -1,5 +1,10 @@
 <template>
   <PageLayout title="Tone Generator">
+    <template #description>
+      Generate pure sine, square, and triangle waves with precise frequency control. Perfect for
+      testing audio equipment, creating reference tones, or educational purposes.
+    </template>
+
     <div class="space-y-6">
       <div>
         <label for="frequency" class="block text-sm/6 font-medium text-gray-900">

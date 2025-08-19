@@ -135,3 +135,13 @@ watch(
   },
 )
 </script>
+
+<style>
+/* noUISlider z-index fix for reversed order of handles in range mode */
+.origin {
+  z-index: 5 !important;
+  + .origin {
+    z-index: 4 !important;
+  }
+}
+</style>

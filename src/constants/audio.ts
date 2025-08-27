@@ -1,4 +1,4 @@
-import { type WaveType, type NoiseType } from '@/services/modules'
+import { type WaveType, type NoiseType } from '@/services/modules/audioEngine'
 
 export const MIN_FREQUENCY = 20
 export const MAX_FREQUENCY = 20000

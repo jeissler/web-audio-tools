@@ -1,5 +1,5 @@
-import { ref, watch, computed } from 'vue'
-import { createAudioEngine, type WaveType, type NoiseType } from '@/services/modules'
+import { ref, watch } from 'vue'
+import { createAudioEngine, type WaveType, type NoiseType } from '@/services/modules/audioEngine'
 import { useAudioStore } from '@/stores/audio'
 import { storeToRefs } from 'pinia'
 import {
@@ -9,22 +9,25 @@ import {
   DEFAULT_DURATION,
 } from '@/constants/audio'
 
-const audioEngine = createAudioEngine()
+// Local variable for timeout
 let durationTimeout: ReturnType<typeof setTimeout> | null = null
 
 export function useAudioEngine() {
-  // Local state
+  // Local reactive state
   const frequency = ref(DEFAULT_FREQUENCY)
   const frequencyRange = ref<[number, number]>([DEFAULT_FREQUENCY, 2000])
   const pan = ref(0)
   const waveType = ref<WaveType>(DEFAULT_TYPE)
   const duration = ref(DEFAULT_DURATION)
+  const isPlaying = ref(false)
 
   // Global state (only volume needs to be global for header control)
   const { volume } = storeToRefs(useAudioStore())
 
-  // Proxy isPlaying from audio engine internal state
-  const isPlaying = computed(() => audioEngine.isPlaying())
+  // Create audio engine with callback to update reactive state
+  const audioEngine = createAudioEngine((playing) => {
+    isPlaying.value = playing
+  })
 
   function clearDurationTimeout() {
     if (durationTimeout) {

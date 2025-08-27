@@ -1,5 +1,10 @@
 import noiseProcessorUrl from '@/services/noiseProcessor.ts?worker&url'
-import type { WaveType, NoiseType } from './types'
+
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext
+  }
+}
 
 interface AudioState {
   isPlaying: boolean
@@ -11,7 +16,10 @@ interface AudioState {
   analyserNode: AnalyserNode | null
 }
 
-export const createAudioEngine = () => {
+export type WaveType = OscillatorType
+export type NoiseType = 'white' | 'pink' | 'brown'
+
+export const createAudioEngine = (onStateChange?: (isPlaying: boolean) => void) => {
   let state: AudioState = {
     isPlaying: false,
     audioCtx: null,
@@ -20,6 +28,14 @@ export const createAudioEngine = () => {
     gainNode: null,
     panNode: null,
     analyserNode: null,
+  }
+
+  // Helper to update playing state and notify callback
+  const setIsPlaying = (playing: boolean) => {
+    if (state.isPlaying !== playing) {
+      state.isPlaying = playing
+      onStateChange?.(playing)
+    }
   }
 
   // Helper functions with closure access to state
@@ -87,6 +103,7 @@ export const createAudioEngine = () => {
       panNode: null,
       analyserNode: null,
     }
+    onStateChange?.(false)
   }
 
   return {
@@ -112,14 +129,14 @@ export const createAudioEngine = () => {
         state.oscillator.stop(state.audioCtx.currentTime + duration)
 
         state.oscillator.onended = () => {
-          state.isPlaying = false
+          setIsPlaying(false)
           state.oscillator = null
         }
 
-        state.isPlaying = true
+        setIsPlaying(true)
       } catch (error) {
         console.error('Start tone failed:', error)
-        state.isPlaying = false
+        setIsPlaying(false)
         throw error
       }
     },
@@ -152,14 +169,14 @@ export const createAudioEngine = () => {
         state.oscillator.stop(now + duration)
 
         state.oscillator.onended = () => {
-          state.isPlaying = false
+          setIsPlaying(false)
           state.oscillator = null
         }
 
-        state.isPlaying = true
+        setIsPlaying(true)
       } catch (error) {
         console.error('Start sweep failed:', error)
-        state.isPlaying = false
+        setIsPlaying(false)
         throw error
       }
     },
@@ -176,10 +193,10 @@ export const createAudioEngine = () => {
 
         state.gainNode.gain.setValueAtTime(volume, state.audioCtx.currentTime)
         state.noiseNode.connect(state.gainNode)
-        state.isPlaying = true
+        setIsPlaying(true)
       } catch (error) {
         console.error('Start noise failed:', error)
-        state.isPlaying = false
+        setIsPlaying(false)
         throw error
       }
     },
@@ -204,10 +221,10 @@ export const createAudioEngine = () => {
           state.noiseNode.disconnect()
           state.noiseNode = null
         }
-        state.isPlaying = false
+        setIsPlaying(false)
       } catch (error) {
         console.error('Stop noise failed:', error)
-        state.isPlaying = false
+        setIsPlaying(false)
       }
     },
 

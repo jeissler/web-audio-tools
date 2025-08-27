@@ -205,4 +205,30 @@ describe('WebAudioService', () => {
       expect(service.isPlaying).toBe(false)
     })
   })
+
+  describe('observer pattern', () => {
+    it('should call callback on state changes', async () => {
+      const mockCallback = vi.fn()
+      const serviceWithCallback = new WebAudioService(mockCallback)
+
+      await serviceWithCallback.startTone()
+      serviceWithCallback.stopTone()
+
+      expect(mockCallback).toHaveBeenCalledTimes(2)
+      expect(mockCallback).toHaveBeenNthCalledWith(1, true)
+      expect(mockCallback).toHaveBeenNthCalledWith(2, false)
+    })
+
+    it('should not call callback when state unchanged', async () => {
+      const mockCallback = vi.fn()
+      const serviceWithCallback = new WebAudioService(mockCallback)
+
+      await serviceWithCallback.startTone()
+      mockCallback.mockClear()
+      await serviceWithCallback.startTone() // No state change
+
+      expect(mockCallback).not.toHaveBeenCalled()
+      serviceWithCallback.stopTone()
+    })
+  })
 })

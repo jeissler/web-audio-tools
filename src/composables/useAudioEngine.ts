@@ -1,5 +1,5 @@
 import { ref, watch } from 'vue'
-import { createAudioEngine, type WaveType, type NoiseType } from '@/services/modules/audioEngine'
+import { WebAudioService, type WaveType, type NoiseType } from '@/services/WebAudioService'
 import { useAudioStore } from '@/stores/audio'
 import { storeToRefs } from 'pinia'
 import {
@@ -24,8 +24,8 @@ export function useAudioEngine() {
   // Global state (only volume needs to be global for header control)
   const { volume } = storeToRefs(useAudioStore())
 
-  // Create audio engine with callback to update reactive state
-  const audioEngine = createAudioEngine((playing) => {
+  // Create audio service with callback that automatically updates reactive state
+  const audioService = new WebAudioService((playing) => {
     isPlaying.value = playing
   })
 
@@ -42,7 +42,7 @@ export function useAudioEngine() {
 
   async function start() {
     try {
-      await audioEngine.startTone(
+      await audioService.startTone(
         frequency.value,
         volume.value,
         waveType.value,
@@ -50,7 +50,7 @@ export function useAudioEngine() {
         duration.value,
       )
 
-      // Set timeout to stop after duration
+      // Stop after duration
       clearDurationTimeout()
       durationTimeout = setTimeout(stop, duration.value * 1000)
     } catch (error) {
@@ -60,7 +60,7 @@ export function useAudioEngine() {
 
   async function startSweep() {
     try {
-      await audioEngine.startSweep(
+      await audioService.startSweep(
         frequencyRange.value[0],
         frequencyRange.value[1],
         duration.value,
@@ -69,7 +69,7 @@ export function useAudioEngine() {
         pan.value,
       )
 
-      // Set timeout to stop after duration
+      // Stop after duration
       clearDurationTimeout()
       durationTimeout = setTimeout(stop, duration.value * 1000)
     } catch (error) {
@@ -79,7 +79,7 @@ export function useAudioEngine() {
 
   async function stop() {
     try {
-      await audioEngine.stopTone()
+      audioService.stopTone()
     } catch (error) {
       console.error('Failed to stop audio:', error)
     } finally {
@@ -89,38 +89,38 @@ export function useAudioEngine() {
 
   function setFrequency(freq: number) {
     frequency.value = freq
-    audioEngine.setFrequency(freq)
+    audioService.setFrequency(freq)
   }
 
   function setPan(value: number) {
     pan.value = value
-    audioEngine.setPan(value)
+    audioService.setPan(value)
   }
 
   function setWaveType(type: WaveType) {
     waveType.value = type
-    audioEngine.setWaveType(type)
+    audioService.setWaveType(type)
   }
 
   async function startNoise(type: NoiseType) {
     try {
-      await audioEngine.startNoise(type, volume.value)
+      await audioService.startNoise(type, volume.value)
     } catch (error) {
       console.error('Failed to start noise:', error)
     }
   }
 
   function stopNoise() {
-    audioEngine.stopNoise()
+    audioService.stopNoise()
   }
 
   function setNoiseType(type: NoiseType) {
-    audioEngine.setNoiseType(type)
+    audioService.setNoiseType(type)
   }
 
-  // Keep engine volume in sync with global volume store
+  // Keep service volume in sync with global volume store
   watch(volume, (val) => {
-    audioEngine.setVolume(val)
+    audioService.setVolume(val)
   })
 
   return {

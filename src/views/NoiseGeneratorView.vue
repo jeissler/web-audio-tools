@@ -46,7 +46,7 @@ import PageLayout from '@/layouts/PageLayout.vue'
 import ControlButton from '@/components/ControlButton.vue'
 import { useAudioEngine } from '@/composables/useAudioEngine'
 import { NOISE_TYPE_OPTIONS, DEFAULT_NOISE_TYPE } from '@/constants/audio'
-import type { NoiseType } from '@/services/modules'
+import type { NoiseType } from '@/services/WebAudioService'
 import { ref, computed } from 'vue'
 
 const { isPlaying, startNoise, stopNoise, setNoiseType } = useAudioEngine()

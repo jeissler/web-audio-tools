@@ -15,6 +15,8 @@ interface WebkitWindow extends Window {
   webkitAudioContext?: typeof AudioContext
 }
 
+type StateChangeCallback = (isPlaying: boolean) => void
+
 export class WebAudioService {
   private noiseNode: AudioWorkletNode | null = null
   private audioCtx: AudioContext | null = null
@@ -24,8 +26,27 @@ export class WebAudioService {
   private analyser: AnalyserNode | null = null
   private _isPlaying = false
 
+  // Store callback for reactive state updates
+  private onStateChange?: StateChangeCallback
+
+  /**
+   * Creates a new WebAudioService instance
+   * @param onStateChange - Optional callback that gets called when isPlaying state changes
+   */
+  constructor(onStateChange?: StateChangeCallback) {
+    this.onStateChange = onStateChange
+  }
+
   get isPlaying(): boolean {
     return this._isPlaying
+  }
+
+  // Notify observers when playing state changes
+  private setIsPlaying(playing: boolean): void {
+    if (this._isPlaying !== playing) {
+      this._isPlaying = playing
+      this.onStateChange?.(playing)
+    }
   }
 
   private async ensureContext(): Promise<void> {
@@ -67,7 +88,7 @@ export class WebAudioService {
     this.panNode = null
     this.analyser = null
     this.audioCtx = null
-    this._isPlaying = false
+    this.setIsPlaying(false)
   }
 
   private async playOscillator(
@@ -104,7 +125,7 @@ export class WebAudioService {
     this.oscillator.start(now)
     this.oscillator.stop(stopTime)
 
-    this._isPlaying = true
+    this.setIsPlaying(true)
     this.oscillator.onended = () => this.cleanup()
   }
 
@@ -194,13 +215,13 @@ export class WebAudioService {
       this.gainNode.gain.setValueAtTime(volume, this.audioCtx.currentTime)
     }
 
-    this._isPlaying = true
+    this.setIsPlaying(true)
   }
 
   public stopNoise(): void {
     this.noiseNode?.disconnect()
     this.noiseNode = null
-    this._isPlaying = false
+    this.setIsPlaying(false)
   }
 
   public setNoiseType(type: NoiseType): void {

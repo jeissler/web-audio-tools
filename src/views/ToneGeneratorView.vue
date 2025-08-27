@@ -74,7 +74,7 @@ import ControlSelect from '@/components/ControlSelect.vue'
 import ControlInput from '@/components/ControlInput.vue'
 import { useAudioEngine } from '@/composables/useAudioEngine'
 import { MIN_FREQUENCY, MAX_FREQUENCY } from '@/constants/audio'
-import type { WaveType } from '@/services/WebAudioService'
+import type { WaveType } from '@/services/modules'
 
 const {
   frequency,
